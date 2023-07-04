@@ -5,10 +5,32 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Member;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 
 class MemberController extends Controller
 {
+    function login(Request $request)
+    {
+        $user= Member::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response([
+                'message' => ['These credentials do not match our records']
+            ], 404);
+        }
+        
+        $token = $user->createToken('my-app-token')->plainTextToken;
+    
+        $response = [
+            'user' => $user,
+            'token' => $token
+        ];
+    
+        return response($response, 201);
+    }
+
+
     public function index()
     {
         $result = Member::all();
@@ -85,7 +107,13 @@ class MemberController extends Controller
                 return response()->json(['errors' => $validator->errors()], 400);
             }
 
-            $result->update($request->all());
+            // $result->update($request->all());
+
+            $data = $request->all();
+            $data['password'] = Hash::make($data['password']);
+
+            $result->update($data);
+            
             return response()->json(['message' => 'Data has been updated successfully'], 201);
         }
     }

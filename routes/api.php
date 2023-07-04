@@ -21,7 +21,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 
-Route::prefix('/')->as('member.')->group(function() {
+Route::prefix('/')->middleware('auth:sanctum')->as('member.')->group(function() {
+
+    //login auth sanctum
+    //Note by Demy: take note for the given token after login to access all url below 
+    Route::post('/login', [MemberController::class, 'login'])->name('login');
 
     //show all members
     Route::get('/show-all', [MemberController::class, 'index'])->name('show_all');
