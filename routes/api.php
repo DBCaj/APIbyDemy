@@ -42,7 +42,7 @@ Route::prefix('/')->middleware('auth:sanctum')->as('member.')->group(function() 
     //delete member by ID
     Route::delete('/delete/{id}', [MemberController::class, 'destroy'])->name('delete');
 
-    //show member by name or character name
+    //show member by name or character 
     Route::get('/search/{name}', [MemberController::class, 'show'])->name('show_by_name_or_char');
 
 });
